@@ -1,0 +1,5 @@
+ddsp==0.7.0
+pyyaml
+addict
+torch==1.4.0
+pretty_midi
