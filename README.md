@@ -4,7 +4,7 @@ Below are some commands you might want to run to get this repo set up and runnin
 
 ```sh
 # set up a virtual environment
-virtualenv -p python3 --no-site-packages midi2params_env
+virtualenv -p python3 midi2params_env
 cd midi2params_env
 source bin/activate
 
@@ -12,7 +12,7 @@ source bin/activate
 pip install ddsp==0.7.0
 pip install pyyaml
 pip install addict
-pip install torch==1.2.0
+pip install torch==1.4.0
 pip install pretty_midi
 python -m pip install ipykernel
 git clone https://github.com/rodrigo-castellon/midi2params.git
