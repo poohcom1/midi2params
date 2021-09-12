@@ -9,7 +9,7 @@ source bin/activate
 pip install ddsp==0.7.0
 pip install pyyaml
 pip install addict
-pip install torch==1.4.0
+pip install torch==1.2.0
 pip install pretty_midi
 python -m pip install ipykernel
 git clone https://github.com/rodrigo-castellon/midi2params.git
