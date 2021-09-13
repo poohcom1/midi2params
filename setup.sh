@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # set up a virtual environment
-virtualenv -p python3 midi2params_env
+virtualenv -p python3.7 midi2params_env
 cd midi2params_env
 source bin/activate
 
@@ -12,7 +12,7 @@ pip install addict
 pip install torch==1.2.0
 pip install pretty_midi
 python -m pip install ipykernel
-git clone https://github.com/rodrigo-castellon/midi2params.git
+git clone https://github.com/poohcom1/midi2params.git
 cd midi2params
 pip install -e .
 # install the kernel into jupyter, so that it can be used
