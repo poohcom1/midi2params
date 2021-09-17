@@ -16,3 +16,4 @@ __pycache__
 *.p
 *.pkl
 *.mid*
+.vscode/*

@@ -24,19 +24,25 @@ from addict import Dict
 
 from utils.util import to_numpy, p2f, sample_from
 
-import datasets
-import models
+try:
+    import datasets
+    import models
+except:
+    from . import datasets
+    from . import models
 
 ########
 # Data #
 ########
 
+
 def load_dataset(set_type, config):
     # set_type is "train", "val", or "test"
 
     dataset = datasets.MIDIParamsDataset(settype=set_type, config=config)
-    
+
     return dataset
+
 
 def get_loader(dataset, config, set_type):
     # get the dataloader from the dataset object
@@ -54,6 +60,7 @@ def get_loader(dataset, config, set_type):
                             pin_memory=config.loader.pin_memory)
 
     return dataloader
+
 
 def trim_and_preprocess(batch, config):
     """
@@ -96,7 +103,8 @@ def trim_and_preprocess(batch, config):
             # we want the labels to be shifted back by one
             offset -= 1
 
-        batch[k] = arr[:, subclip_start + offset:subclip_start + offset + len_subclip]
+        batch[k] = arr[:, subclip_start +
+                       offset:subclip_start + offset + len_subclip]
 
     x = F.one_hot(batch['pitches'].long(), 129).float()
 
@@ -116,14 +124,15 @@ def trim_and_preprocess(batch, config):
         x = torch.cat((x,
                        batch['teacher_forcing_f0'].unsqueeze(-1),
                        batch['teacher_forcing_ld'].unsqueeze(-1)), dim=-1)
-    
+
     batch['x'] = x
-    
+
     return batch
 
 ##########
 # Models #
 ##########
+
 
 def load_model(config):
     # construct model according to config-specified arguments
@@ -131,17 +140,23 @@ def load_model(config):
 
     return model
 
+
 def load_best_model(config, fpath=None):
     # load in the best model
     if fpath is None:
         fpath = config.model.best_path
 
-    model = torch.load(fpath)
-    
     if config.device == 'cuda':
-        model = model.cuda()
+        try:
+            model = torch.load(fpath)
+            model = model.cuda()
+        except Exception:
+            model = torch.load(fpath, map_location=torch.device('cpu'))
+    else:
+        model = torch.load(fpath, map_location=torch.device('cpu'))
 
     return model
+
 
 def midi2params(model, batch):
     """
@@ -149,11 +164,12 @@ def midi2params(model, batch):
     DDSP parameters using the inputted model.
     """
     cent_logits, ld_logits, cent_out, ld_out = model.generate(batch)
-    
+
     pitches = batch['pitches']
-    
-    f0_pred, ld_pred = get_predictions_from_model_outputs(cent_out, ld_out, pitches)
-    
+
+    f0_pred, ld_pred = get_predictions_from_model_outputs(
+        cent_out, ld_out, pitches)
+
     return to_numpy(f0_pred), to_numpy(ld_pred)
 
 ##################
@@ -163,10 +179,12 @@ def midi2params(model, batch):
 # each loss function here expects that the predicted/ground truth
 # output takes on the form of a tensor of shape N x seqlen
 
+
 def regression_loss(pred, y):
     # naive loss function: add up all elementwise
     # l2 distances
     return nn.MSELoss()(pred, y)
+
 
 def cross_entropy_loss(pred, y):
     """
@@ -174,6 +192,7 @@ def cross_entropy_loss(pred, y):
     the last dimension, reducing to a scalar by taking the mean.
     """
     return torch.mean(torch.sum(-nn.LogSoftmax(-1)(pred) * y, dim=-1))
+
 
 loss_fn_dict = {
     'regression': regression_loss,
@@ -184,6 +203,7 @@ loss_fn_dict = {
 ##############
 # Optimizers #
 ##############
+
 
 def get_optimizer(model, config):
     # check each hyperparameter
@@ -210,6 +230,7 @@ def get_optimizer(model, config):
 # Logging and Visualization #
 #############################
 
+
 def compile_metrics(metrics):
     """
     Compile a metrics dictionary in a way specific to wavegenie. Specifically,
@@ -224,6 +245,7 @@ def compile_metrics(metrics):
     metrics = compiled
     return metrics
 
+
 def get_predictions_from_model_outputs(cent_out, ld_out, pitches):
     """
     Turn the one-hot outputs cent_out and ld_out into continuous scalar signals in time.
@@ -235,20 +257,23 @@ def get_predictions_from_model_outputs(cent_out, ld_out, pitches):
         ld_out = ld_out.cpu()
     if pitches.is_cuda:
         pitches = pitches.cpu()
-    
-    cent_pred, ld_pred = cent_out.argmax(-1).float() - 50, ld_out.argmax(-1).float() - 120
-    
+
+    cent_pred, ld_pred = cent_out.argmax(-1).float() - \
+        50, ld_out.argmax(-1).float() - 120
+
     f0_pred = p2f(pitches.float()) * 2**(cent_pred / 1200)
-    
-    return to_numpy(f0_pred), to_numpy(ld_pred)  # ensure that we return numpy arrays
+
+    # ensure that we return numpy arrays
+    return to_numpy(f0_pred), to_numpy(ld_pred)
+
 
 def get_predictions(cent_logits, ld_logits, pitches):
     """
     Get raw model predictions as continuous signals for easy comparison and evaluation.
     """
-    
+
     # TODO: adapt for the multi-output model with absolute f0 prediction
-    
+
     # get a (1250,) array of cents outputted by the model
     if cent_logits.is_cuda:
         cent_logits = cent_logits.cpu()
@@ -260,11 +285,14 @@ def get_predictions(cent_logits, ld_logits, pitches):
     cents_pred = F.softmax(cent_logits, dim=-1) @ torch.arange(-50, 51).float()
     # compute predicted f0 from these predicted cents
     f0_pred = p2f(pitches.float()) * 2**(cents_pred / 1200)
-    
+
     # compute loudness from our logits
-    loudness_pred = F.softmax(ld_logits, dim=-1) @ torch.arange(-120, 1).float()
-    
-    return to_numpy(f0_pred), to_numpy(loudness_pred)  # ensure that we return numpy arrays
+    loudness_pred = F.softmax(
+        ld_logits, dim=-1) @ torch.arange(-120, 1).float()
+
+    # ensure that we return numpy arrays
+    return to_numpy(f0_pred), to_numpy(loudness_pred)
+
 
 def plot_predictions_against_groundtruths(f0_pred, loudness_pred, f0, loudness):
     """
@@ -272,7 +300,8 @@ def plot_predictions_against_groundtruths(f0_pred, loudness_pred, f0, loudness):
     Return `plt` to allow this to be sent to W&B.
     """
     # convert to numpy arrays if torch tensors
-    f0_pred, loudness_pred, f0, loudness = to_numpy(f0_pred), to_numpy(loudness_pred), to_numpy(f0), to_numpy(loudness)
+    f0_pred, loudness_pred, f0, loudness = to_numpy(f0_pred), to_numpy(
+        loudness_pred), to_numpy(f0), to_numpy(loudness)
 
     fig, axs = plt.subplots(2, 1)
     fig.set_size_inches(20, 15)
@@ -288,12 +317,13 @@ def plot_predictions_against_groundtruths(f0_pred, loudness_pred, f0, loudness):
     axs[1].set_xlim(0, 1000)
     axs[1].set_title('Loudness Comparison')
     axs[1].legend()
-    
+
     #np.save('f0_pred.npy', f0_pred)
     #np.save('f0.npy', f0)
-    #fig.savefig('example_fig.png')
-    
+    # fig.savefig('example_fig.png')
+
     return fig
+
 
 def plot_probdist_prediction(ld_logits):
     ld_probs = F.softmax(ld_logits, dim=-1)
@@ -301,12 +331,13 @@ def plot_probdist_prediction(ld_logits):
     ax.imshow(to_numpy(ld_probs).T, origin='lower')
     ax.set_xlim(0, 1000)
     ax.set_title('Loudness Probability Distribution')
-    
+
     return fig
 
 ###################################
 # General/Miscellaneous Functions #
 ###################################
+
 
 def seed_everything(seed):
     # seed torch, numpy, etc.
@@ -315,6 +346,7 @@ def seed_everything(seed):
     np.random.seed(seed)
     torch.manual_seed(seed)
     torch.cuda.manual_seed(seed)
+
 
 def parse_arguments():
     parser = argparse.ArgumentParser(description='Train a model.')
@@ -327,9 +359,11 @@ def parse_arguments():
 
     return args
 
+
 def parse_custom_arguments():
     args = [arg[2:].split('=') for arg in sys.argv[1:]]
     return args
+
 
 def load_config(cfg_path):
     """
@@ -352,4 +386,3 @@ def load_config(cfg_path):
         config[folder] = subconfig
 
     return config
-    

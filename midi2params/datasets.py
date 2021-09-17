@@ -56,6 +56,7 @@ class MIDIParamsDataset(Dataset):
         else:
             raise 'Unsupported file extension for MIDI files.'
 
+
         if type(config.dataset.audio_folder_name) == type(''):
             print('USING AUDIO')
             self.audio = True
@@ -357,3 +358,27 @@ def notes2pitches(notes, length, NO_NOTE_VAL=128, FRAME_RATE=250, transform=None
 
 def normalize(x, min_, max_):
     return (x - min_) / (max_ - min_)
+
+def load_midi_file(midi_path, len_clip=5, frame_rate=250):
+        # handle the possibility of either .mid or .midi files
+        try:
+            midi = pretty_midi.PrettyMIDI(midi_path)
+        except FileNotFoundError:
+            midi = pretty_midi.PrettyMIDI(midi_path + 'i')
+        print(midi.instruments)
+        notes = midi.instruments[0].notes
+
+        # get onsets/offsets from MIDI
+        onsets = [int(frame_rate * n.start) for n in notes]
+        offsets = [int(frame_rate * n.end) for n in notes]
+        # NOTE: make extra long arrays just in case the MIDI notes go on for longer
+        onset_arr = np.zeros((3 * len_clip * frame_rate), dtype=np.float32)
+        onset_arr[onsets] = 1  # embed pointwise onsets/offsets into zero array
+        offset_arr = np.zeros((3 * len_clip * frame_rate), dtype=np.float32)
+        offset_arr[offsets] = 1  # embed pointwise onsets/offsets into zero array
+
+        # get pitches
+        pitches = notes2pitches(notes, 3 * len_clip * frame_rate, NO_NOTE_VAL=0)
+
+        
+        return pitches, onset_arr, offset_arr

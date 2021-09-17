@@ -1,6 +1,7 @@
 """
 File intended to end with environment that allows interaction with dataloader for inspection.
 """
+from definitions import ROOT_DIR
 
 import torch
 import torch.nn as nn
@@ -15,7 +16,7 @@ from train_utils import *
 
 args = parse_arguments()
 
-args.config = '../midi2params/configs/midi2params-best.yml'
+args.config = os.path.join(ROOT_DIR, 'midi2params/configs/midi2params-best.yml')
 
 # get config
 print('getting config')

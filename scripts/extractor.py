@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import time
 import pickle
 import tqdm
+import librosa
 import multiprocessing
 import argparse
 from scipy.io.wavfile import read as wavread
@@ -54,9 +55,12 @@ def extract(fpath, basepath, force=False):
         return
     
     # load audio
-    _, audio = wavread(fpath)
+    #rate, audio = wavread(fpath)
+    audio, sr = librosa.load(fpath, sr=16000)
+    
     start = time.time()
-    audio_parameters = extract_ddsp_synthesis_parameters(audio[np.newaxis, ...])
+    audio_parameters = extract_ddsp_synthesis_parameters(
+        audio[np.newaxis, ...])
     print('took {:.3g} seconds'.format(time.time() - start))
 
     # build up the file tree up to this point, if it doesn't exist yet

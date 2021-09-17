@@ -2,6 +2,7 @@
 Script to train neural net. Here, we aim to learn the mapping
 MIDI -> control parameters.
 """
+from definitions import ROOT_DIR
 
 import torch
 import torch.nn as nn
@@ -18,7 +19,8 @@ import copy
 
 from train_utils import *
 
-DEFAULT_CONFIG_PATH = 'midi2params/configs/midi2params-best.yml'
+DEFAULT_CONFIG_PATH = os.path.join(
+    ROOT_DIR, 'midi2params/configs/midi2params-8dio.yml')
 
 def main(verbose=True):
     args = parse_custom_arguments()
