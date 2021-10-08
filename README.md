@@ -38,6 +38,28 @@ To test the model out, `notebooks/midi2params-results.ipynb` is a demo notebook.
 
 Also, check out the paper, currently hosted [here](https://cs.stanford.edu/~rjcaste/research/realistic_midi.pdf).
 
+# Training
+Training requires 3 types of input data: midi files, wav files, and DDSP param files. 
+The param files come in form of python pickle files, and can be automatically generated with an included script.
+
+1. Prepare dataset of midi and wav files in the `data` directory (make one at project root if it does not exist).
+  - Make sure corresponding midi and wav files have the same name
+2. Split the files into 2 folders: `wav` and `midi`.
+3. Run the `make_splits` script to automatically split the files into test/train/val folders:
+```sh
+python scripts/make_splits.py --path data/{date_set_folder}
+```
+4. Run the `extractor` script to automatically convert the wav files into params pickle files:
+```sh
+python scripts/extractor.py --path  data/{date_set_folder}/wav
+```
+5. Create a config yml file in `midi2params/configs`. You can just copy an existing one and just change the `dataset.dset_path` value to your dataset.
+
+6. Run the `trainscript` file to train the model:
+```sh
+python midi2params/trainscript.py 
+```
+
 # File Structure Convention
 
 Some of these may be mainly relevant if you're interested in training models.
