@@ -43,7 +43,7 @@ Training requires 3 types of input data: midi files, wav files, and DDSP param f
 The param files come in form of python pickle files, and can be automatically generated with an included script.
 
 1. Prepare dataset of midi and wav files in the `data` directory (make one at project root if it does not exist).
-  - Make sure corresponding midi and wav files have the same name
+   - Make sure corresponding midi and wav files have the same name
 2. Split the files into 2 folders: `wav` and `midi`.
 3. Run the `make_splits` script to automatically split the files into test/train/val folders:
 ```sh
