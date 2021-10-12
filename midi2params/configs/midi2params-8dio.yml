@@ -3,7 +3,7 @@
 ---
 # replace these absolute paths with your own paths
 seed: 1
-device: 'cpu'
+device: 'cuda'
 # frame rate of DDSP control parameters
 frame_rate: 250
 sample_rate: 16000
@@ -11,9 +11,9 @@ mode: 'training'
 # a variable to turn on if doing a one-off experiment
 oneoff: False
 subconfigs:
-- model: 'seq-best'
+- model: 'seq-1'
 logging:
-    log_dir: '../logs'
+    log_dir: '/juice/scr/rjcaste/curis/wavegenie/logs'
     # log perplexity of every loss metric to W&B
     log_perplexity: False
     example_saving:
@@ -31,7 +31,7 @@ preprocessing:
     # length of the clip taken from a file
     len_clip: 5
     # length of clip after cropping down to a subclip
-    len_subclip: 5
+    len_subclip: 4
     # number of quantization bins for loudness
     ld_bins: 121
     # number of quantization bins for f0 (cents)
@@ -39,9 +39,9 @@ preprocessing:
 training:
     num_epochs: 1000
     optim: 'Adam'
-    learning_rate: 0.005541652481255721
+    learning_rate: 0.005
     # L2 regularization
-    weight_decay: 0.0005397680337845211
+    weight_decay: 0.0005
     # use Gaussian trick from CREPE for backpropping through, and
     # add this new loss function to the metrics (but keep computing the old
     # super discrete one as well)
@@ -51,7 +51,7 @@ training:
     train_only_on_loudness: False
 dataset:
     # path to dataset, which contains paired training data
-    dset_path: 'data/8dio_samples'
+    dset_path: 'data/8dio_test_batch_1'
     # name of subfolder under dset_path corresponding to control parameters
     params_folder_name: 'params'
     # name of subfolder under dset_path corresponding to MIDI files
@@ -59,6 +59,6 @@ dataset:
     audio_folder_name: 'wav'
 loader:
     shuffle_during_eval: False
-    batch_size: 104
+    batch_size: 100
     num_workers: 4
     pin_memory: True

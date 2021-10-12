@@ -3,6 +3,7 @@ Extract parameters from all WAV files in a folder and place those pickled audio 
 in an adjacent folder. The source folder can contain subfolders.
 """
 
+import warnings
 import numpy as np
 import os
 import matplotlib.pyplot as plt
@@ -18,6 +19,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # suppress annoying TF warnings
 from utils.audio_io import load_audio, save_wav
 from utils.util import preview_audio, DDSP_DEFAULT_FS_AUDIO
 from utils.util import extract_ddsp_synthesis_parameters
+
 
 # name of parallel folder holding the parameters we are extracting
 BASE_FOLDER_NAME = 'params'
@@ -59,8 +61,11 @@ def extract(fpath, basepath, force=False):
     audio, sr = librosa.load(fpath, sr=16000)
     
     start = time.time()
-    audio_parameters = extract_ddsp_synthesis_parameters(
-        audio[np.newaxis, ...])
+
+    with warnings.catch_warnings():
+        warnings.simplefilter("ignore")
+        audio_parameters = extract_ddsp_synthesis_parameters(
+            audio[np.newaxis, ...])
     print('took {:.3g} seconds'.format(time.time() - start))
 
     # build up the file tree up to this point, if it doesn't exist yet

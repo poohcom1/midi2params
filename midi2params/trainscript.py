@@ -20,7 +20,7 @@ import copy
 from train_utils import *
 
 DEFAULT_CONFIG_PATH = os.path.join(
-    ROOT_DIR, 'midi2params/configs/midi2params-8dio.yml')
+    ROOT_DIR, 'midi2params/configs/midi2params-dev.yml')
 
 def main(verbose=True):
     args = parse_custom_arguments()

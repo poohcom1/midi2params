@@ -56,7 +56,6 @@ class MIDIParamsDataset(Dataset):
         else:
             raise 'Unsupported file extension for MIDI files.'
 
-
         if type(config.dataset.audio_folder_name) == type(''):
             print('USING AUDIO')
             self.audio = True

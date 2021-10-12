@@ -51,7 +51,7 @@ training:
     train_only_on_loudness: False
 dataset:
     # path to dataset, which contains paired training data
-    dset_path: '/juice/scr/rjcaste/curis/wavegenie/data/CustomViolin_16k_train_aligned'
+    dset_path: 'data/CustomViolin_16k_train_aligned'
     # name of subfolder under dset_path corresponding to control parameters
     params_folder_name: 'params'
     # name of subfolder under dset_path corresponding to MIDI files
