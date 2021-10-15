@@ -13,7 +13,7 @@ Prerequisites:
 **Windows**:
 [setup_windows.bat](https://raw.githubusercontent.com/poohcom1/midi2params/main/setup_shell.sh)
 
-*Note: The script itself generates a virtualenv directory where the repo is then cloned into, so don't run the the shell script from within an already cloned repo
+*Note: The script itself clones the repo into a virtualenv, so don't run the the shell script from within an already cloned repo. 
 
 To test the model out, `notebooks/midi2params-results.ipynb` is a demo notebook.
 
