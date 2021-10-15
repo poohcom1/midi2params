@@ -13,7 +13,7 @@ oneoff: False
 subconfigs:
 - model: 'seq-1'
 logging:
-    log_dir: '/juice/scr/rjcaste/curis/wavegenie/logs'
+    log_dir: 'logs'
     # log perplexity of every loss metric to W&B
     log_perplexity: False
     example_saving:
@@ -37,7 +37,7 @@ preprocessing:
     # number of quantization bins for f0 (cents)
     cent_bins: 101
 training:
-    num_epochs: 1000
+    num_epochs: 500
     optim: 'Adam'
     learning_rate: 0.005
     # L2 regularization
@@ -51,7 +51,7 @@ training:
     train_only_on_loudness: False
 dataset:
     # path to dataset, which contains paired training data
-    dset_path: 'data/8dio_test_batch_1'
+    dset_path: 'data/8dio_test_batch_2'
     # name of subfolder under dset_path corresponding to control parameters
     params_folder_name: 'params'
     # name of subfolder under dset_path corresponding to MIDI files

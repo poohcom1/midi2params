@@ -16,7 +16,7 @@ audio_file_name = ''.join(midi_file.split('.')[:-1]) + ".wav"
 config = load_config('./midi2params/configs/midi2params-best.yml')
 
 ckpt_path = './checkpoints/CustomViolinCheckpoint'
-model = load_ddsp_model(ckpt_path)
+ddsp_model = load_ddsp_model(ckpt_path)
 
 
 pitches, onset_arr, offset_arr = load_midi_file(midi_file)
@@ -43,7 +43,7 @@ train_params = {
 
 # Resynthesize parameters
 print("Resynthesizing...")
-new_model_resynth = synthesize_ddsp_audio(model, train_params)
+new_model_resynth = synthesize_ddsp_audio(ddsp_model, train_params)
 
 scipy.io.wavfile.write(audio_file_name, 16000, -new_model_resynth.swapaxes(0, 1)[0])
 print("Finished! Audio saved to %s." % audio_file_name)
