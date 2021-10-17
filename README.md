@@ -38,6 +38,27 @@ To test the model out, `notebooks/midi2params-results.ipynb` is a demo notebook.
 
 Also, check out the paper, currently hosted [here](https://cs.stanford.edu/~rjcaste/research/realistic_midi.pdf).
 
+# Data Requirements:
+
+## wav
+
+|        Field        | Value  |
+|---------------------|--------------|
+|      codec_name     |  pcm_f32le   |
+|      codec_type     |    audio     |
+|   codec_tag_string  | [3][0][0][0] |
+|      codec_tag      |    0x0003    |
+|      sample_fmt     |     flt      |
+|     sample_rate     |    16000     |
+|       channels      |      1       |
+|   bits_per_sample   |      32      |
+|      time_base      |   1/16000    |
+|       bit_rate      |    512092    |
+|      nb_streams     |      1       |
+|     nb_programs     |      0       |
+|     format_name     |     wav      |
+|     probe_score     |      99      |
+
 # Training
 Training requires 3 types of input data: midi files, wav files, and DDSP param files. 
 The param files come in form of python pickle files, and can be automatically generated with an included script.
@@ -93,8 +114,27 @@ Model checkpoints from DDSP.
 Training script/utilities for our params2midi models.
 
 ## `scripts/`
-
 Catch-all for one-off and long-term reusable scripts for data wrangling/manipulation.
+
+### split_midis_into_arrs.py
+Splits MIDI files into N seconds of pickle files
+
+
+### split_midis.py
+Splits MIDI files into smaller MIDI files given a length in seconds
+ - `--length`, `-l`: Length in seconds to split into (default: 5)
+ - `--sourcepath`, `-s`: Directory of MIDI files to split
+ - `--targetpath`, `-t`: Target directory to save output files to
+
+### split_saves.py
+Splits wav files into smaller files given a length in seconds.
+
+*Args same as above
+
+### split_midis_into_arrs.py
+Like `split_midis`, but outputs pickled files instead
+
+*Args same as above
 
 ## `utils/`
 
