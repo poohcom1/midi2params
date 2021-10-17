@@ -1,38 +1,19 @@
 # Getting Started
 
-Below are some commands you might want to run to get this repo set up and running. You can also just download [setup.sh](https://github.com/poohcom1/midi2params/blob/main/setup.sh) and run it with bash.
+Below are some commands you might want to run to get this repo set up and running. 
+You can also just download the script file and run it to automate the process, run the command in the script one by one if you're worried about errors:
 
 Prerequisites: 
  - python3.7
  - virtualenv
-```sh
-#!/bin/bash
 
-# set up a virtual environment (make sure you have python3.7 install for torch1.2.0!)
-virtualenv -p python3.7 midi2params_env
-cd midi2params_env
-source bin/activate
+**MacOS and Linux**:
+[setup_shell.sh](https://raw.githubusercontent.com/poohcom1/midi2params/main/setup_windows.bat)
 
-# install some python packages
-pip install ddsp==0.7.0
-pip install pyyaml
-pip install addict
-pip install torch==1.2.0
-pip install pretty_midi
-python -m pip install ipykernel
-git clone https://github.com/poohcom1/midi2params.git
-cd midi2params
-pip install -e .
-# install the kernel into jupyter, so that it can be used
-# in the notebook
-python -m ipykernel install --user --name=midi2params_env
+**Windows**:
+[setup_windows.bat](https://raw.githubusercontent.com/poohcom1/midi2params/main/setup_shell.sh)
 
-# get necessary data
-./get_data.sh
-./get_checkpoint.sh
-./get_model.sh
-```
-
+*Note: The script itself clones the repo into a virtualenv, so don't run the the shell script from within an already cloned repo. 
 
 To test the model out, `notebooks/midi2params-results.ipynb` is a demo notebook.
 

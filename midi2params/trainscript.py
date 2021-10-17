@@ -4,6 +4,10 @@ MIDI -> control parameters.
 """
 from definitions import ROOT_DIR
 
+import os
+#os.environ['TF_CPP_MIN_LOG_LEVEL'] = '3'  # suppress annoying TF warnings
+os.environ['WANDB_MODE'] = 'offline'
+
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
@@ -20,7 +24,7 @@ import copy
 from train_utils import *
 
 DEFAULT_CONFIG_PATH = os.path.join(
-    ROOT_DIR, 'midi2params/configs/midi2params-dev.yml')
+    ROOT_DIR, 'midi2params/configs/midi2params-8dio.yml')
 
 def main(verbose=True):
     args = parse_custom_arguments()
@@ -105,14 +109,14 @@ def main(verbose=True):
     optimizer = get_optimizer(model, config)
 
     # set up logging
-    log_dir = wandb.run.dir
+    log_dir = "log_dir" #wandb.run.dir
     print('logging everything to', log_dir)
     config_save_fpath = os.path.join(log_dir, 'config.yml')
     with open(config_save_fpath, 'w') as f:
         yaml.dump(config, f)
     train_loss_fpath = os.path.join(log_dir, 'train_loss.txt')
     val_loss_fpath = os.path.join(log_dir, 'val_loss.txt')
-    best_model_path = os.path.join(log_dir, 'best_model.pt')
+    best_model_path = os.path.join("model", "best_model.pt")
     metrics_to_track = ['loudness_loss_discrete', 'cents_loss_discrete',
                         'total_loss_discrete', 'infer_time']
 
@@ -364,21 +368,22 @@ def main(verbose=True):
             # timing
             val_metrics['val_infer_time'].append(infer_time)
 
+            # WTF DOES THIS EVEN DO AND WHY DOES IT KEEP BREAKING????
             # save n prediction examples if we're on the right epoch
-            if epoch % config.logging.example_saving.save_every == 0 and i == 0:
-                idx_start = config.logging.example_saving.i
-                for idx in range(idx_start, idx_start + config.logging.example_saving.num_examples):
-                    f0, loudness_db, pitches = batch['f0'], batch['loudness_db'], batch['pitches']
-                    pitches = pitches[idx].float()
-                    cent_logits_ = cent_logits[idx]
-                    ld_logits_ = ld_logits[idx]
-                    f0_pred, loudness_pred = get_predictions(cent_logits_, ld_logits_, pitches)
-                    # now plot these
-                    fig = plot_predictions_against_groundtruths(f0_pred, loudness_pred, f0[idx], loudness_db[idx])
-                    fig2 = plot_probdist_prediction(ld_logits_)
-                    # give plt to wandb
-                    val_metrics['val_pred_plot {}'.format(idx)] = fig
-                    val_metrics['val_pred_plot_ld {}'.format(idx)] = fig2
+            # if epoch % config.logging.example_saving.save_every == 0 and i == 0:
+            #     idx_start = config.logging.example_saving.i
+            #     for idx in range(idx_start, idx_start + config.logging.example_saving.num_examples):
+            #         f0, loudness_db, pitches = batch['f0'], batch['loudness_db'], batch['pitches']
+            #         pitches = pitches[idx].float()
+            #         cent_logits_ = cent_logits[idx]
+            #         ld_logits_ = ld_logits[idx]
+            #         f0_pred, loudness_pred = get_predictions(cent_logits_, ld_logits_, pitches)
+            #         # now plot these
+            #         fig = plot_predictions_against_groundtruths(f0_pred, loudness_pred, f0[idx], loudness_db[idx])
+            #         fig2 = plot_probdist_prediction(ld_logits_)
+            #         # give plt to wandb
+            #         val_metrics['val_pred_plot {}'.format(idx)] = fig
+            #         val_metrics['val_pred_plot_ld {}'.format(idx)] = fig2
 
 
         # compile metrics
