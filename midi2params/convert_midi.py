@@ -10,7 +10,9 @@ from utils.util import load_ddsp_model
 from utils.util import synthesize_ddsp_audio
 
 midi_file = sys.argv[1]
-audio_file_name = ''.join(midi_file.split('.')[:-1]) + ".wav"
+model_path = './model/best_model.pt'
+audio_file_name = ''.join(os.path.basename(midi_file).split('.')[:-1]) + ".wav"
+
 
 # get config
 config = load_config('./midi2params/configs/midi2params-best.yml')
@@ -23,12 +25,21 @@ pitches, onset_arr, offset_arr = load_midi_file(midi_file)
 
 batch = {}
 
-batch['pitches'] = torch.Tensor([pitches])
-batch['onset_arr'] = torch.Tensor([onset_arr])
-batch['offset_arr'] = torch.Tensor([offset_arr])
+pitches = torch.Tensor([pitches])
+onset_arr = torch.Tensor([onset_arr])
+offset_arr = torch.Tensor([offset_arr])
+
+if torch.cuda.is_available():
+    pitches = pitches.cuda()
+    onset_arr = onset_arr.cuda()
+    offset_arr = offset_arr.cuda()
+
+batch['pitches'] = pitches
+batch['onset_arr'] = onset_arr
+batch['offset_arr'] = offset_arr
 
 print("Getting params...")
-model_path = './model/best_model.pt'
+
 
 with warnings.catch_warnings():
     warnings.simplefilter("ignore")
