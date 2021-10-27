@@ -11,9 +11,9 @@ mode: 'training'
 # a variable to turn on if doing a one-off experiment
 oneoff: False
 subconfigs:
-- model: 'seq-1'
+- model: 'seq-best'
 logging:
-    log_dir: 'logs'
+    log_dir: '../logs'
     # log perplexity of every loss metric to W&B
     log_perplexity: False
     example_saving:
@@ -37,11 +37,11 @@ preprocessing:
     # number of quantization bins for f0 (cents)
     cent_bins: 101
 training:
-    num_epochs: 500
+    num_epochs: 1000
     optim: 'Adam'
-    learning_rate: 0.005
+    learning_rate: 0.005541652481255721
     # L2 regularization
-    weight_decay: 0.0005
+    weight_decay: 0.0005397680337845211
     # use Gaussian trick from CREPE for backpropping through, and
     # add this new loss function to the metrics (but keep computing the old
     # super discrete one as well)
@@ -51,7 +51,7 @@ training:
     train_only_on_loudness: False
 dataset:
     # path to dataset, which contains paired training data
-    dset_path: 'data/8dio_test_batch_2'
+    dset_path: 'data/8dio_batch_3'
     # name of subfolder under dset_path corresponding to control parameters
     params_folder_name: 'params'
     # name of subfolder under dset_path corresponding to MIDI files
@@ -59,6 +59,6 @@ dataset:
     audio_folder_name: 'wav'
 loader:
     shuffle_during_eval: False
-    batch_size: 100
+    batch_size: 40
     num_workers: 4
     pin_memory: True

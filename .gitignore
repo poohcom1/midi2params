@@ -18,3 +18,6 @@ __pycache__
 *.mid*
 .vscode/*
 **/*.un~
+
+tfrecord/
+log_dir/

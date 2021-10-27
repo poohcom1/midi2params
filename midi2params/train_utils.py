@@ -90,6 +90,7 @@ def trim_and_preprocess(batch, config):
     # to prevent any wonky stuff
     final_idx = config.frame_rate * config.preprocessing.len_clip
     len_subclip = config.frame_rate * config.preprocessing.len_subclip
+
     subclip_start = np.random.randint(50, final_idx - 50 - len_subclip)
     for k, arr in batch.items():
         if k == 'audio':

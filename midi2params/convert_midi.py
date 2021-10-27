@@ -9,15 +9,14 @@ import torch
 from utils.util import load_ddsp_model
 from utils.util import synthesize_ddsp_audio
 
-midi_file = sys.argv[1]
-model_path = './model/best_model.pt'
+midi_file = sys.argv[2]
+model_path = sys.argv[1]
 audio_file_name = ''.join(os.path.basename(midi_file).split('.')[:-1]) + ".wav"
-
 
 # get config
 config = load_config('./midi2params/configs/midi2params-best.yml')
 
-ckpt_path = './checkpoints/CustomViolinCheckpoint'
+ckpt_path = sys.argv[3] or './checkpoints/CustomViolinCheckpoint'
 ddsp_model = load_ddsp_model(ckpt_path)
 
 

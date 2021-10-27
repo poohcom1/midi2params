@@ -1,7 +1,7 @@
 import sys
 import os
+import mido
 from prettytable.prettytable import MARKDOWN
-from pydub.utils import mediainfo
 from prettytable import PrettyTable
 
 file = sys.argv[1]
