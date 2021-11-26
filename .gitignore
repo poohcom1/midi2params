@@ -21,3 +21,4 @@ __pycache__
 
 tfrecord/
 log_dir/
+*.whl

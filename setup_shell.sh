@@ -9,7 +9,7 @@ source bin/activate
 pip install ddsp==0.7.0
 pip install pyyaml
 pip install addict
-pip install torch==1.2.0
+pip install https://download.pytorch.org/whl/cpu/torch-1.2.0%2Bcpu-cp37-cp37m-win_amd64.whl
 pip install pretty_midi
 python -m pip install ipykernel
 git clone https://github.com/poohcom1/midi2params.git

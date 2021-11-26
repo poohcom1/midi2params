@@ -91,10 +91,13 @@ def main(verbose=True):
     train_loader, val_loader, test_loader = loaders
 
     # load model
-    print('loading model')
-    model = load_model(config)
-    if config.device == 'cuda':
-        model = model.cuda()
+    # print('loading model')
+    # model = load_model(config)
+    # if config.device == 'cuda':
+    #     model = model.cuda()
+
+    # load existing model
+    model = torch.load(os.path.join("model", "model_new_data.pt"))
 
     # start watching the model with wandb
     wandb.watch(model)
@@ -116,7 +119,7 @@ def main(verbose=True):
         yaml.dump(config, f)
     train_loss_fpath = os.path.join(log_dir, 'train_loss.txt')
     val_loss_fpath = os.path.join(log_dir, 'val_loss.txt')
-    best_model_path = os.path.join("model", "best_model.pt")
+    best_model_path = os.path.join("model", "model_new_data.pt.pt") # todo: change back
     metrics_to_track = ['loudness_loss_discrete', 'cents_loss_discrete',
                         'total_loss_discrete', 'infer_time']
 
